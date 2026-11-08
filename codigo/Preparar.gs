@@ -100,7 +100,9 @@ function prepararHoja() {
   ORDEN.forEach((n, i) => { ss.setActiveSheet(ss.getSheetByName(n)); ss.moveActiveSheet(i + 1); });
   ss.getSheets().forEach(s => { if (ORDEN.indexOf(s.getName()) < 0 && s.getLastRow() === 0) ss.deleteSheet(s); });
   ss.setActiveSheet(hb);
-  SpreadsheetApp.getUi().alert('✅ Hoja preparada. Recarga la página para ver el menú 🤖 Mi bot.');
+  const aviso = '✅ Hoja preparada. Recarga la página para ver el menú 🤖 Mi bot.';
+  // Desde el editor de Apps Script no se pueden mostrar avisos: entonces sale en el registro.
+  try { SpreadsheetApp.getUi().alert(aviso); } catch (e) { console.log(aviso); }
 }
 
 function hoja_(ss, nombre) { return ss.getSheetByName(nombre) || ss.insertSheet(nombre); }
