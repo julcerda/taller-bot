@@ -2,7 +2,7 @@
 
 Práctica del taller en la Facultad de Ciencias Políticas y Sociología (Universidad Complutense de Madrid) · lunes, 30 de noviembre de 2026.
 
-👉 **Guía completa paso a paso:** abre [`index.html`](index.html) (la página del taller).
+👉 **Guía completa paso a paso:** https://julcerda.github.io/taller-bot/ (la página del taller; su código es [`index.html`](index.html)).
 
 Vas a crear un asistente que responde preguntas sobre los trámites de un ayuntamiento de la Comunidad de Madrid **usando solo la información oficial de su sede electrónica**. No necesitas saber programar.
 
