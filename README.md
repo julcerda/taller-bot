@@ -42,7 +42,7 @@ Vas a crear un asistente que responde preguntas sobre los trámites de un ayunta
 
 ### Paso 1 · Haz tu copia de la hoja del bot
 
-1. Abre el enlace que te dará el profesor: **[Hacer una copia de «Mi bot de sede electrónica»](ENLACE_PLANTILLA)**.
+1. Abre el enlace que te dará el profesor: **[Hacer una copia de «Mi bot de sede electrónica»](https://docs.google.com/spreadsheets/d/1QnI9ZlM8_w3Wts7cEsLKG5BV2HEHl_NUp6ng3shXNTo/copy)**.
 2. Pulsa **«Hacer una copia»**.
 
 ![Hacer una copia](img/01_copia.png)

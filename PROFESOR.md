@@ -5,7 +5,9 @@
 2. Comprueba que funciona con un ayuntamiento: menú 🤖 Mi bot, pasos 0 a 4.
 3. Antes de compartirla, deja la hoja limpia: ejecuta `prepararHoja` otra vez. Tu clave de Gemini **no** se copia, porque se guarda en tus propiedades de usuario, no en la hoja.
 4. **Compartir → Cualquier persona con el enlace → Lector.**
-5. Copia el enlace y cambia el final `/edit…` por **`/copy`**. Ese es el enlace «Hacer una copia» que va en el README (`ENLACE_PLANTILLA`) y en la diapositiva.
+5. Copia el enlace y cambia el final `/edit…` por **`/copy`**. Ese es el enlace «Hacer una copia» que va en el README y en la diapositiva.
+
+**Plantilla ya preparada** (cuenta masquearchivos, compartida como lector): [Hacer una copia](https://docs.google.com/spreadsheets/d/1QnI9ZlM8_w3Wts7cEsLKG5BV2HEHl_NUp6ng3shXNTo/copy). Para cambiar el código, edítalo en esa hoja (Extensiones → Apps Script, con la cuenta masquearchivos activa): las copias que se hagan después llevan el cambio.
 
 ## Asignar ayuntamientos
 La pestaña «Municipios» tiene las sedes comprobadas. Reparte un municipio por estudiante (por orden de lista, por ejemplo) para que no repitan, y proyecta la tabla de asignación al empezar.
