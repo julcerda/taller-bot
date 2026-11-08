@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root { --azul:#1a56db; --fondo:#f4f6fb; --texto:#1f2937; --gris:#5b6474; --linea:#d9dee8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color:var(--texto); background:#fff; display:flex; flex-direction:column; height:100vh; }
+  header { padding:12px 14px; background:var(--azul); color:#fff; }
+  header b { display:block; font-size:15px; }
+  header span { font-size:12px; opacity:.9; }
+  #chat { flex:1; overflow-y:auto; padding:12px; background:var(--fondo); }
+  .m { max-width:92%; margin:0 0 10px; padding:9px 11px; border-radius:12px; font-size:14px; line-height:1.45; white-space:pre-wrap; word-wrap:break-word; }
+  .bot { background:#fff; border:1px solid var(--linea); border-bottom-left-radius:4px; }
+  .yo { background:var(--azul); color:#fff; margin-left:auto; border-bottom-right-radius:4px; }
+  .m a { color:var(--azul); }
+  .espera { color:var(--gris); font-style:italic; }
+  .etq { display:block; margin:-4px 0 10px; font-size:11.5px; color:var(--gris); }
+  .aviso { font-size:11.5px; color:var(--gris); padding:6px 12px; border-top:1px solid var(--linea); }
+  form { display:flex; gap:6px; padding:10px; border-top:1px solid var(--linea); }
+  input { flex:1; padding:10px; border:1px solid var(--linea); border-radius:8px; font-size:14px; }
+  input:focus { outline:2px solid var(--azul); outline-offset:1px; }
+  button { padding:10px 14px; border:0; border-radius:8px; background:var(--azul); color:#fff; font-size:14px; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+</style>
+</head>
+<body>
+  <header><b id="titulo">Mi bot</b><span>Asistente de la sede electrónica</span></header>
+  <div id="chat" aria-live="polite"></div>
+  <div class="aviso">Soy una inteligencia artificial: comprueba siempre los datos en la sede oficial.</div>
+  <form id="f">
+    <label for="q" style="position:absolute;left:-9999px">Tu pregunta</label>
+    <input id="q" placeholder="Escribe tu pregunta…" autocomplete="off">
+    <button id="b">Enviar</button>
+  </form>
+<script>
+  const chat = document.getElementById('chat');
+
+  // Escribe un mensaje en el chat (los enlaces se pueden pulsar)
+  function pinta(texto, quien) {
+    const d = document.createElement('div');
+    d.className = 'm ' + quien;
+    d.textContent = texto;
+    d.innerHTML = d.innerHTML.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;
+    return d;
+  }
+
+  // Al abrir: nombre del ayuntamiento y saludo
+  google.script.run.withSuccessHandler(d => {
+    document.getElementById('titulo').textContent = 'Mi bot · ' + (d.muni || 'mi ayuntamiento');
+    pinta(d.bienvenida || 'Hola, ¿en qué te puedo ayudar?', 'bot');
+  }).datosChat();
+
+  // Al enviar una pregunta
+  document.getElementById('f').addEventListener('submit', e => {
+    e.preventDefault();
+    const q = document.getElementById('q').value.trim();
+    if (!q) return;
+    pinta(q, 'yo');
+    document.getElementById('q').value = '';
+    const espera = pinta('Pensando…', 'bot espera');
+    document.getElementById('b').disabled = true;
+    google.script.run
+      .withSuccessHandler(d => { espera.remove(); pinta(d.texto, 'bot'); etiqueta(d); fin(); })
+      .withFailureHandler(err => { espera.remove(); pinta('⚠️ ' + err.message, 'bot'); fin(); })
+      .responderConDetalle(q);
+  });
+  // Debajo de cada respuesta: qué intención ha reconocido y cómo ha respondido
+  function etiqueta(d) {
+    const e = document.createElement('span');
+    e.className = 'etq';
+    e.textContent = (d.intencion ? '🎯 Intención: ' + d.intencion + ' (' + d.parecido + ' %)' : '🎯 Ninguna intención reconocida') +
+      ' · ' + (d.tipo === 'revisada' ? '✅ respuesta revisada' : '🤖 respuesta de la IA');
+    chat.appendChild(e);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function fin() { document.getElementById('b').disabled = false; document.getElementById('q').focus(); }
+</script>
+</body>
+</html>
