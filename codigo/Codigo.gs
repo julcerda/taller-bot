@@ -36,6 +36,17 @@ const H_PREGUNTAS = 'Preguntas';
 const H_MUNICIPIOS = 'Municipios';
 const H_INTENCIONES = 'Intenciones';
 const H_REGISTRO = 'Registro';
+// Tipos de página de cada sede: clave en Municipios.gs y nombre de la columna en la pestaña «Municipios»
+const TIPOS_PAGINA = [
+  ['tramites',       'Catálogo de trámites'],
+  ['instancia',      'Instancia general'],
+  ['padron',         'Certificado de empadronamiento'],
+  ['padron_alta',    'Alta en el padrón'],
+  ['recurso',        'Recursos administrativos'],
+  ['calendario',     'Calendario y plazos'],
+  ['identificacion', 'Sistemas de identificación'],
+  ['oficinas',       'Oficinas y titularidad']
+];
 const UMBRAL_PARECIDO = 0.5; // a partir de este parecido (0 a 1) se da por reconocida una intención
 
 // ------------------------------------------------------------
@@ -93,11 +104,15 @@ function cargarFuentes() {
   const fila = filas.find(f => f[0] === muni);
   if (!fila) return aviso('No encuentro «' + muni + '» en la lista de municipios.');
 
-  // En la pestaña Municipios: A nombre · B sede · C… URLs de páginas concretas
-  const urls = fila.slice(2).filter(u => String(u).startsWith('http'));
+  // En la pestaña Municipios: A nombre · B sede · C… una columna por tipo de página (la cabecera dice cuál)
+  const cabecera = filas[0];
+  const fuentes = [];
+  fila.forEach((u, i) => { if (i >= 2 && String(u).startsWith('http')) fuentes.push([u, cabecera[i]]); });
   const hoja = ss.getSheetByName(H_FUENTES);
   hoja.getRange(2, 1, Math.max(hoja.getLastRow() - 1, 1), 6).clearContent();
-  hoja.getRange(2, 1, urls.length, 1).setValues(urls.map(u => [u]));
+  // Columna A: la URL · columna C: qué es (al leerla, la IA pone ahí el título real)
+  hoja.getRange(2, 1, fuentes.length, 3).setValues(fuentes.map(([u, tipo]) => [u, '', tipo]));
+  const urls = fuentes.map(f => f[0]);
   marcar('B7', '✅ ' + urls.length + ' páginas cargadas en «Fuentes»');
   ss.setActiveSheet(hoja);
   aviso('He puesto ' + urls.length + ' páginas de la sede de ' + muni + ' en la pestaña «Fuentes».\n\n' +
@@ -129,10 +144,11 @@ function leerFuentes() {
       // c) guardar el JSON en tu Drive
       const enlace = guardarEnDrive(carpeta, 'fuente_' + (i + 1) + '.json', JSON.stringify(json, null, 2));
       hoja.getRange(fila, 2, 1, 5).setValues([[
-        '✅ leída', json.titulo || '', texto.length, enlace, JSON.stringify(json).slice(0, 45000)
+        '✅ leída', json.titulo || hoja.getRange(fila, 3).getValue(), texto.length, enlace, JSON.stringify(json).slice(0, 45000)
       ]]);
     } catch (e) {
-      hoja.getRange(fila, 2, 1, 5).setValues([['❌ ' + e.message.slice(0, 120), '', '', '', '']]);
+      hoja.getRange(fila, 2).setValue('❌ ' + e.message.slice(0, 120));  // la columna C conserva el tipo de página
+      hoja.getRange(fila, 4, 1, 3).clearContent();
     }
     SpreadsheetApp.flush();
   });

@@ -65,7 +65,7 @@ Se abre tu propia hoja. Arriba verás un menú nuevo: **🤖 Mi bot** (si no apa
 
 1. En la pestaña **Mi bot**, celda amarilla **B5**: elige **el ayuntamiento que te ha tocado** en la lista.
 2. Menú **🤖 Mi bot → 1 · Cargar las fuentes de mi ayuntamiento**.
-3. En la pestaña **Fuentes** aparecen las páginas oficiales que va a leer tu bot.
+3. En la pestaña **Fuentes** aparecen las páginas oficiales que va a leer tu bot. La columna **C** dice qué es cada una (instancia general, padrón, calendario…).
 
 ### Paso 4 · Lee las fuentes (la IA crea los JSON)
 

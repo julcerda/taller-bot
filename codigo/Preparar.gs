@@ -16,12 +16,14 @@ function prepararHoja() {
   // ---------- Municipios (lista de sedes comprobadas) ----------
   const hm = hoja_(ss, H_MUNICIPIOS);
   hm.clear();
-  const cab = ['Municipio', 'Sede electrónica', 'Página 1', 'Página 2', 'Página 3', 'Página 4', 'Página 5', 'Página 6', 'Página 7', 'Página 8'];
-  const filas = MUNICIPIOS.map(m => { const f = [m.n, m.sede].concat(m.paginas); while (f.length < cab.length) f.push(''); return f.slice(0, cab.length); });
+  // Una columna por tipo de página (ver TIPOS_PAGINA en Codigo.gs); vacía si ese ayuntamiento no la tiene
+  const cab = ['Municipio', 'Sede electrónica'].concat(TIPOS_PAGINA.map(t => t[1]));
+  const filas = MUNICIPIOS.map(m => [m.n, m.sede].concat(TIPOS_PAGINA.map(t => m.paginas[t[0]] || '')));
   hm.getRange(1, 1, 1, cab.length).setValues([cab]).setFontWeight('bold').setBackground(CLARO);
   hm.getRange(2, 1, filas.length, cab.length).setValues(filas);
   hm.setFrozenRows(1);
   hm.setColumnWidth(1, 200);
+  hm.setColumnWidths(3, TIPOS_PAGINA.length, 230);
   hm.setTabColor('#9aa3b2');
 
   // ---------- Mi bot (panel de control) ----------
