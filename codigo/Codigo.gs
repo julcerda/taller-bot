@@ -1,7 +1,8 @@
 /**
  * ============================================================
- *  MI BOT DE SEDE ELECTRÓNICA · práctica de clase
- *  Universidad Complutense de Madrid · Facultad de CC. Políticas
+ *  MI BOT DE SEDE ELECTRÓNICA
+ *  i-learning bytes en 60 minutos · Cómo crear tu propio chatbot
+ *  Autor: Julio Cerdá Díaz
  * ============================================================
  *
  *  Cómo funciona un bot de información pública, en 4 pasos:
