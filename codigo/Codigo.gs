@@ -1,7 +1,7 @@
 /**
  * ============================================================
  *  MI BOT DE SEDE ELECTRÓNICA
- *  i-learning bytes en 60 minutos · Cómo crear tu propio chatbot
+ *  Archival Microlearning Bytes · Cómo crear tu propio chatbot en 60 minutos
  *  Autor: Julio Cerdá Díaz
  * ============================================================
  *

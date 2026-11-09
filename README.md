@@ -1,6 +1,6 @@
 # 🤖 Cómo crear tu propio chatbot en 60 minutos
 
-**i-learning bytes en 60 minutos** · inteligencia, aprendizaje e IA en pequeñas dosis · Autor: Julio Cerdá Díaz
+**Archival Microlearning Bytes** · formación en pequeñas dosis, en 60 minutos · Autor: Julio Cerdá Díaz
 
 👉 **Guía completa paso a paso:** https://julcerda.github.io/taller-bot/ (la página de la práctica; su código es [`index.html`](index.html)).
 
@@ -121,6 +121,19 @@ Edita la celda amarilla **B11** (Instrucciones del bot) de la pestaña **Mi bot*
 ## Para casa: móntalo desde cero
 
 Si quieres entender el código, en la carpeta [`codigo/`](codigo/) están los archivos comentados. Sigue la [guía «Desde cero»](DESDE_CERO.md): hoja nueva, pegar el código y ejecutar `prepararHoja`.
+
+---
+
+## Mira este repositorio de otras formas
+
+Cambia unas letras de la dirección de GitHub:
+
+| Herramienta | Cambio | Qué te enseña |
+|---|---|---|
+| [GitReverse](https://gitreverse.com/julcerda/taller-bot) | `github` → `gitreverse` | El *prompt* que habría que dar a una IA para crear este proyecto |
+| [GitDiagram](https://gitdiagram.com/julcerda/taller-bot) | `hub` → `diagram` | Un diagrama de cómo encajan las piezas |
+| [Gitingest](https://gitingest.com/julcerda/taller-bot) | `hub` → `ingest` | Todo el proyecto en un solo texto para pegarlo en una IA |
+| [GitMCP](https://gitmcp.io/julcerda/taller-bot) | `github.com` → `gitmcp.io` | El proyecto como fuente que asistentes como Claude pueden consultar |
 
 ---
 
