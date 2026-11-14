@@ -64,6 +64,9 @@ function onOpen() {
     .addSeparator()
     .addItem('5 · Taller de intenciones', 'irAIntenciones')
     .addItem('6 · Ver el registro de preguntas', 'irARegistro')
+    .addSeparator()
+    .addItem('7 · Añadir un JSON a mano', 'anadirJSON')
+    .addItem('8 · ¿Funciona mi bot? (autoevaluación)', 'comprobarMiBot')
     .addToUi();
 }
 
@@ -134,6 +137,7 @@ function leerFuentes() {
   urls.forEach((url, i) => {
     if (!url.startsWith('http')) return;
     const fila = i + 2;
+    if (String(hoja.getRange(fila, 2).getValue()).startsWith('✍️')) return; // añadida a mano (menú 7): no se vuelve a leer
     hoja.getRange(fila, 2).setValue('⏳ leyendo…');
     SpreadsheetApp.flush();
     try {
@@ -332,6 +336,95 @@ function probarPreguntas() {
   SpreadsheetApp.getActive().setActiveSheet(hoja);
   aviso('Hecho. Ahora te toca a ti: en la columna C marca ✅ si la respuesta es correcta ' +
         '(compruébalo en la sede), ❌ si es incorrecta o 🤥 si se ha inventado algo.');
+}
+
+// ------------------------------------------------------------
+// MENÚ 7 · Añadir un JSON a mano (por ejemplo, el que creas en la página del taller)
+// ------------------------------------------------------------
+/**
+ * Pega un JSON y se añade como una fuente más al final de «Fuentes».
+ * El bot lo usa igual que los que crea la IA en el paso 2.
+ */
+function anadirJSON() {
+  const ui = SpreadsheetApp.getUi();
+  const r = ui.prompt('7 · Añadir un JSON a mano',
+    'Pega aquí el JSON (por ejemplo, el que has creado en el «Taller de JSON» de la página del curso):',
+    ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  const texto = r.getResponseText().trim();
+  if (!texto) return aviso('No has pegado nada.');
+
+  let json;
+  try { json = JSON.parse(texto); }
+  catch (e) {
+    return aviso('❌ Eso no es un JSON válido.\n\nRevisa que empiece por { y termine por }, que los textos vayan entre comillas dobles "así" ' +
+                 'y que no falte ninguna coma. En la página del curso, el «Taller de JSON» te dice dónde está el fallo.');
+  }
+  if (Array.isArray(json)) json = { titulo: 'Fichas añadidas a mano', tramites: json };
+  if (typeof json !== 'object' || json === null) return aviso('❌ El JSON tiene que ser un objeto: { … }.');
+
+  const t = (json.tramites && json.tramites[0]) || {};
+  const titulo = json.titulo || t.nombre || 'Ficha añadida a mano';
+  const enlace = json.fuente || json.enlace || t.enlace || '';
+  const contenido = JSON.stringify(json, null, 2);
+  let enDrive = '';
+  try { enDrive = guardarEnDrive(carpetaDatos(), 'a_mano_' + titulo.slice(0, 40).replace(/[^\wáéíóúñü -]/gi, '') + '.json', contenido); } catch (e) {}
+
+  const hoja = SpreadsheetApp.getActive().getSheetByName(H_FUENTES);
+  const fila = Math.max(hoja.getLastRow() + 1, 2);
+  hoja.getRange(fila, 1, 1, 6).setValues([[enlace || '(añadido a mano)', '✍️ añadido a mano', titulo, texto.length, enDrive,
+    JSON.stringify(json).slice(0, 45000)]]);
+  SpreadsheetApp.getActive().setActiveSheet(hoja);
+  aviso('✅ JSON añadido en la fila ' + fila + ' de «Fuentes»: «' + titulo + '».\n\n' +
+        'Pruébalo: menú 🤖 Mi bot → 3 · Abrir el chat, y pregunta por ese trámite. La respuesta debe terminar con «Fuente:».');
+}
+
+// ------------------------------------------------------------
+// MENÚ 8 · ¿Funciona mi bot? Autoevaluación (no gasta llamadas a la IA)
+// ------------------------------------------------------------
+/** Revisa la hoja y apunta en la pestaña «Mi progreso» qué objetivos has cumplido. */
+function comprobarMiBot() {
+  const ss = SpreadsheetApp.getActive();
+  const bot = ss.getSheetByName(H_BOT), hf = ss.getSheetByName(H_FUENTES), hp = ss.getSheetByName(H_PREGUNTAS),
+        hi = ss.getSheetByName(H_INTENCIONES), hr = ss.getSheetByName(H_REGISTRO);
+  const filas = (h, nc) => h && h.getLastRow() > 1 ? h.getRange(2, 1, h.getLastRow() - 1, nc).getValues() : [];
+  const F = filas(hf, 6), P = filas(hp, 4), I = filas(hi, 4), R = filas(hr, 6);
+
+  const leidas = F.filter(f => /^(✅|✍️)/.test(f[1]) && f[5]).length;
+  const aMano = F.filter(f => String(f[1]).startsWith('✍️')).length;
+  const conFuente = R.filter(r => String(r[4]).startsWith('🤖') && /Fuente:\s*\S/.test(r[5])).length;
+  const respondidas = P.filter(p => p[1] && !/^(⏳|❌)/.test(p[1])).length;
+  const evaluadas = P.filter(p => p[2]).length;
+  const base = {}; (typeof INTENCIONES_BASE !== 'undefined' ? INTENCIONES_BASE : []).forEach(b => base[b[0]] = b);
+  const entrenadas = I.filter(f => f[0] && (!base[f[0]] || String(f[1]).split('\n').filter(String).length >
+                                             String(base[f[0]][1]).split('\n').filter(String).length)).length;
+  const revisadas = I.filter(f => f[0] && String(f[2]).trim() && (!base[f[0]] || String(f[2]).trim() !== String(base[f[0]][2]).trim())).length;
+  const instrucciones = bot && typeof INSTRUCCIONES_BASE !== 'undefined' && String(bot.getRange('B11').getValue()).trim() !== INSTRUCCIONES_BASE;
+
+  const obj = [
+    ['Tengo mi clave de Gemini', !!PropertiesService.getUserProperties().getProperty('GEMINI_KEY'), 'Menú → 0 · Poner mi clave de Gemini'],
+    ['He elegido mi ayuntamiento', !!(bot && bot.getRange('B5').getValue()), 'Pestaña «Mi bot», celda amarilla B5'],
+    ['Mi bot ha leído al menos 3 fuentes (JSON creados)', leidas >= 3, 'Menú → 1 y después 2 · Leer las fuentes (' + leidas + ' leídas)'],
+    ['El chat ha respondido citando la fuente', conFuente >= 1, 'Menú → 3 · Abrir el chat y haz una pregunta. Debe terminar con «Fuente:»'],
+    ['He probado las 10 preguntas', respondidas >= 10, 'Menú → 4 · Probar las 10 preguntas (' + respondidas + ' de 10)'],
+    ['He comprobado las respuestas en la sede (columna C)', evaluadas >= 10, 'Pestaña «Preguntas», columna C (' + evaluadas + ' de 10)'],
+    ['He entrenado al menos una intención con frases nuevas', entrenadas >= 1, 'Pestaña «Intenciones», columna B: añade una frase en otra línea'],
+    ['He escrito una respuesta revisada', revisadas >= 1, 'Pestaña «Intenciones», columnas C (respuesta) y D (enlace)'],
+    ['He añadido un JSON a mano (reto)', aMano >= 1, 'Menú → 7 · Añadir un JSON a mano'],
+    ['He cambiado las instrucciones del bot (reto)', !!instrucciones, 'Pestaña «Mi bot», celda B11']
+  ];
+  const hechos = obj.filter(o => o[1]).length;
+
+  let h = ss.getSheetByName('Mi progreso');
+  if (!h) { h = ss.insertSheet('Mi progreso'); h.setTabColor('#0f9d58'); }
+  h.clear();
+  h.getRange(1, 1, 1, 3).setValues([['Objetivo', '¿Conseguido?', 'Si no, qué hacer']]).setFontWeight('bold').setBackground('#e6f4ea');
+  h.getRange(2, 1, obj.length, 3).setValues(obj.map(o => [o[0], o[1] ? '✅ sí' : '⬜ todavía no', o[1] ? '' : o[2]]));
+  h.getRange(obj.length + 3, 1, 1, 2).setValues([['Resultado', hechos + ' de ' + obj.length + ' · ' + new Date().toLocaleString('es-ES')]]).setFontWeight('bold');
+  h.setColumnWidth(1, 380); h.setColumnWidth(2, 140); h.setColumnWidth(3, 460); h.setFrozenRows(1);
+  ss.setActiveSheet(h);
+  aviso((hechos >= 8 ? '🎉 ¡Muy bien! ' : hechos >= 5 ? '👍 Vas bien. ' : '💪 Sigue así. ') +
+        'Has conseguido ' + hechos + ' de ' + obj.length + ' objetivos.\n\nEn la pestaña «Mi progreso» ves cuáles te faltan y qué hacer.');
 }
 
 // ------------------------------------------------------------

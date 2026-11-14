@@ -35,7 +35,7 @@ function prepararHoja() {
     [5, 'PASO 1 · Elige tu ayuntamiento ▼', ''],
     [7, 'PASO 1 · Fuentes', 'Menú 🤖 Mi bot → 1'],
     [9, 'PASO 2 · Leer las fuentes', 'Menú 🤖 Mi bot → 2'],
-    [11, '✏️ Instrucciones del bot (puedes cambiarlas)', 'Eres el asistente virtual de la sede electrónica del ayuntamiento. Hablas con vecinos que no saben de trámites: usa frases cortas, tutea con educación y explica los pasos en orden.'],
+    [11, '✏️ Instrucciones del bot (puedes cambiarlas)', INSTRUCCIONES_BASE],
     [13, '✏️ Saludo del chat', 'Hola, soy el asistente de la sede electrónica. Pregúntame por trámites, la instancia general, el registro electrónico, el padrón o los plazos.'],
     [15, 'Modelo de IA (no hace falta tocar)', MODELO_POR_DEFECTO]
   ];
@@ -50,6 +50,7 @@ function prepararHoja() {
   hb.getRange('B13').setBackground('#fff7d6'); hb.setRowHeight(13, 50);
   hb.getRange('B15').setFontColor(GRIS);
   hb.getRange('A17').setValue('Siguiente: menú 🤖 Mi bot → 3 · Abrir el chat, y → 4 · Probar las 10 preguntas').setFontColor(GRIS);
+  hb.getRange('A18').setValue('Al terminar: menú 🤖 Mi bot → 8 · ¿Funciona mi bot? te dice qué objetivos has cumplido').setFontColor(GRIS);
   hb.setColumnWidth(1, 330); hb.setColumnWidth(2, 560);
   hb.setTabColor(AZUL);
 
@@ -125,6 +126,9 @@ const PREGUNTAS_BASE = [
 
 // Intenciones de partida: nombre · frases de entrenamiento · respuesta revisada · enlace.
 // Solo la última trae respuesta revisada, como ejemplo. Las demás las completas tú en el taller.
+/** Instrucciones de partida del bot (celda B11). El menú 8 mira si las has cambiado. */
+const INSTRUCCIONES_BASE = 'Eres el asistente virtual de la sede electrónica del ayuntamiento. Hablas con vecinos que no saben de trámites: usa frases cortas, tutea con educación y explica los pasos en orden.';
+
 const INTENCIONES_BASE = [
   ['instancia_general', 'descargar la instancia general\nsolicitud general para el ayuntamiento', '', ''],
   ['registro_electronico', 'presentar un escrito por registro\nmandar documentos al ayuntamiento por internet', '', ''],

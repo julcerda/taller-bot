@@ -12,7 +12,6 @@ Vas a crear un asistente que responde preguntas sobre los trámites de un ayunta
 
 ## Cómo funciona un bot de información pública
 
-![Fuentes → JSON → IA → Respuesta](img/00_mecanica.png)
 
 | Paso | Qué pasa | Dónde lo ves |
 |---|---|---|
@@ -32,7 +31,6 @@ Vas a crear un asistente que responde preguntas sobre los trámites de un ayunta
 3. Pulsa **«Create API key»** (Crear clave de API).
 4. Copia la clave: es un texto largo que empieza por **`AIza…`**. Guárdala en un sitio seguro.
 
-![Crear la clave](img/A_clave.png)
 
 > ⚠️ **No compartas tu clave con nadie.** Y no escribas datos personales en el bot: es una práctica y el nivel gratuito de Gemini puede usar lo que envías para mejorar sus modelos.
 
@@ -45,7 +43,6 @@ Vas a crear un asistente que responde preguntas sobre los trámites de un ayunta
 1. Abre el enlace que te dará el profesor: **[Hacer una copia de «Mi bot de sede electrónica»](https://docs.google.com/spreadsheets/d/1QnI9ZlM8_w3Wts7cEsLKG5BV2HEHl_NUp6ng3shXNTo/copy)**.
 2. Pulsa **«Hacer una copia»**.
 
-![Hacer una copia](img/01_copia.png)
 
 Se abre tu propia hoja. Arriba verás un menú nuevo: **🤖 Mi bot** (si no aparece, recarga la página y espera unos segundos).
 
@@ -59,7 +56,6 @@ Se abre tu propia hoja. Arriba verás un menú nuevo: **🤖 Mi bot** (si no apa
 3. Vuelve a pulsar **🤖 Mi bot → 0**, pega tu clave y pulsa **Aceptar**.
 4. Debe aparecer **✅ ¡Perfecto! La clave funciona.**
 
-![Permisos](img/02_permisos.png)
 
 ### Paso 3 · Elige tu ayuntamiento y carga sus fuentes
 
@@ -75,15 +71,20 @@ Se abre tu propia hoja. Arriba verás un menú nuevo: **🤖 Mi bot** (si no apa
    - **Columna E**: el archivo JSON guardado en tu Drive.
    - **Columna F**: lo que ha entendido la IA. **Esto es lo único que sabrá tu bot.**
 
-![JSON](img/04_json.png)
 
 ### Paso 5 · Habla con tu bot
 
-1. Menú **🤖 Mi bot → 3 · Abrir el chat**.
-2. Pregunta, por ejemplo: *¿Dónde puedo descargar la instancia general?*
-3. Fíjate en la última línea: **Fuente:** con el enlace de donde ha sacado la respuesta.
+1. Menú **🤖 Mi bot → 3 · Abrir el chat**. Se abre un panel a la derecha de la hoja.
+2. Pulsa las tres preguntas de **🧪 Prueba rápida**. Debajo de cada respuesta, una línea gris te dice si ha funcionado:
 
-![Chat](img/05_chat.png)
+| Pregunta de prueba | ✅ Funciona si ves… | Si no sale |
+|---|---|---|
+| ¿Dónde descargo la instancia general? | La respuesta acaba en **Fuente:** y sale «🔗 cita la fuente» | «Todavía no tengo información» → repite el paso 4 |
+| ¿Cómo renuevo el pasaporte? | «✅ respuesta revisada» | Revisa la intención `pasaporte_dni` |
+| ¿A qué hora abre la piscina municipal? | «🤷 dice que no lo sabe» | Si da un horario, se lo ha inventado 🤥 |
+
+3. Cada pregunta queda en la pestaña **Registro**: si aparece ahí, tu chat funciona.
+
 
 ### Paso 6 · Comprueba si tu bot acierta
 
@@ -106,6 +107,18 @@ Se abre tu propia hoja. Arriba verás un menú nuevo: **🤖 Mi bot** (si no apa
 ### Paso 8 · Ajusta las instrucciones
 
 Edita la celda amarilla **B11** (Instrucciones del bot) de la pestaña **Mi bot**: por ejemplo, «explica como si hablaras con una persona mayor» o «responde siempre con una lista de pasos». Cambia el saludo en **B13**. Vuelve a probar y anota en la columna **D** de **Preguntas** qué ha cambiado.
+
+### Reto · Crea un JSON y dáselo a tu bot
+
+1. En la página del curso, sección **Taller de JSON**, rellena la ficha de un trámite con los datos **reales** de tu sede (o pega un JSON en «Comprobar un JSON» para ver si está bien escrito).
+2. Pulsa **Copiar el JSON**.
+3. En tu hoja: menú **🤖 Mi bot → 7 · Añadir un JSON a mano**, pega y acepta. Aparece en «Fuentes» marcado con ✍️.
+4. Pregunta por ese trámite en el chat.
+
+### Autoevaluación
+
+1. Menú **🤖 Mi bot → 8 · ¿Funciona mi bot? (autoevaluación)**. Se abre la pestaña **Mi progreso** con 10 objetivos: ✅ conseguidos y ⬜ pendientes, con lo que tienes que hacer. No gasta llamadas a la IA.
+2. En la página del curso, sección **Autoevaluación**: marca lo que sabes hacer y haz el test de 7 preguntas.
 
 ---
 
@@ -147,3 +160,4 @@ Cambia unas letras de la dirección de GitHub:
 | ❌ «la web respondió 503» | La sede está saturada: espera un poco y repite el paso 4 |
 | ❌ «la página casi no tiene texto» | Esa página necesita JavaScript: bórrala o cámbiala por otra |
 | «API key not valid» | Vuelve a copiar la clave desde AI Studio (Paso A) |
+| Menú 7: «Eso no es un JSON válido» | Compruébalo en el Taller de JSON de la página: te dice en qué línea está el fallo |

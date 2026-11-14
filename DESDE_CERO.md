@@ -27,7 +27,7 @@ Pulsa 💾 **Guardar**.
 2. Acepta los permisos (igual que en clase: Configuración avanzada → Ir a… → Permitir).
 3. Vuelve a la hoja y recárgala: aparecen las pestañas y el menú **🤖 Mi bot**.
 
-Desde aquí, sigue el README desde el **Paso 2**.
+Desde aquí, sigue el README desde el **Paso 2**. Al terminar, el menú **8 · ¿Funciona mi bot?** te dice qué objetivos has cumplido.
 
 ## 5 · Entiende el código
 Abre `Codigo.gs` y busca estas cuatro funciones, que son los cuatro pasos del bot:
@@ -39,5 +39,7 @@ Abre `Codigo.gs` y busca estas cuatro funciones, que son los cuatro pasos del bo
 | `mejorIntencion(pregunta)` | Compara la pregunta con las frases de entrenamiento y busca la intención más parecida |
 | `responderConDetalle(pregunta)` | Si hay respuesta revisada la usa; si no, pide a Gemini que conteste solo con los JSON |
 | `llamarGemini(prompt)` | La llamada a la IA: envía un texto y recibe la respuesta |
+| `anadirJSON()` | Menú 7: añade a «Fuentes» un JSON que has pegado tú |
+| `comprobarMiBot()` | Menú 8: revisa la hoja y apunta en «Mi progreso» qué objetivos has cumplido |
 
 **Reto:** en `respuestaIA`, cambia las «REGLAS FIJAS» para que el bot responda siempre en forma de lista de pasos. Guarda, vuelve al chat y compara.

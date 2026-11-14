@@ -23,6 +23,9 @@
   input:focus { outline:2px solid var(--azul); outline-offset:1px; }
   button { padding:10px 14px; border:0; border-radius:8px; background:var(--azul); color:#fff; font-size:14px; cursor:pointer; }
   button:disabled { opacity:.6; cursor:wait; }
+  .rapida { margin:0 0 12px; font-size:12px; color:var(--gris); }
+  .rapida button { display:block; width:100%; text-align:left; margin:5px 0 0; padding:7px 10px; background:#fff; color:var(--azul); border:1px solid var(--linea); font-size:13px; }
+  .rapida button small { display:block; color:var(--gris); font-size:11px; }
 </style>
 </head>
 <body>
@@ -52,7 +55,30 @@
   google.script.run.withSuccessHandler(d => {
     document.getElementById('titulo').textContent = 'Mi bot · ' + (d.muni || 'mi ayuntamiento');
     pinta(d.bienvenida || 'Hola, ¿en qué te puedo ayudar?', 'bot');
+    pruebaRapida();
   }).datosChat();
+
+  // Tres preguntas para comprobar que el bot funciona (y qué deberías ver en cada una)
+  function pruebaRapida() {
+    const P = [
+      ['¿Dónde descargo la instancia general?', 'Debe responder y terminar con «Fuente:»'],
+      ['¿Cómo renuevo el pasaporte?', 'Debe salir «✅ respuesta revisada»'],
+      ['¿A qué hora abre la piscina municipal?', 'Debe decir que no lo sabe'],
+    ];
+    const caja = document.createElement('div');
+    caja.className = 'rapida';
+    caja.textContent = '🧪 Prueba rápida: pulsa una pregunta';
+    P.forEach(([q, ok]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '';
+      b.append(q);
+      const s = document.createElement('small'); s.textContent = ok; b.append(s);
+      b.onclick = () => { document.getElementById('q').value = q; document.getElementById('f').requestSubmit(); };
+      caja.appendChild(b);
+    });
+    chat.appendChild(caja);
+  }
 
   // Al enviar una pregunta
   document.getElementById('f').addEventListener('submit', e => {
@@ -73,7 +99,8 @@
     const e = document.createElement('span');
     e.className = 'etq';
     e.textContent = (d.intencion ? '🎯 Intención: ' + d.intencion + ' (' + d.parecido + ' %)' : '🎯 Ninguna intención reconocida') +
-      ' · ' + (d.tipo === 'revisada' ? '✅ respuesta revisada' : '🤖 respuesta de la IA');
+      ' · ' + (d.tipo === 'revisada' ? '✅ respuesta revisada' : '🤖 respuesta de la IA') +
+      (/Fuente:\s*\S/.test(d.texto) ? ' · 🔗 cita la fuente' : /no (lo )?s[eé]|no (tengo|dispongo|encuentro)/i.test(d.texto) ? ' · 🤷 dice que no lo sabe' : ' · ⚠️ no cita la fuente');
     chat.appendChild(e);
     chat.scrollTop = chat.scrollHeight;
   }
